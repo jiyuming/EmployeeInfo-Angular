@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Position} from '../data/position';
-import { PositionService} from '../data/position.service';
-import { ActivatedRoute} from '@angular/router';
-import {NgForm} from '@angular/forms';
+import { Position } from '../data/position';
+import { PositionService } from '../data/position.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-position',
@@ -19,42 +18,43 @@ export class PositionComponent implements OnInit {
   successMessage = false;
   failMessage = false;
 
-  constructor(private p: PositionService, private r: ActivatedRoute) { }
+  constructor(private positionService: PositionService, private router: ActivatedRoute) { }
 
   ngOnInit() {
-    this.paramSubScription = this.r.params.subscribe(param => {
-      this.positionSubscription = this.p.getPosition(param['_id']).subscribe( data => {
-        this.position = data[0];
-      });
-    });
+
+    this.paramSubScription = this.router.params.subscribe(param => {
+      // get _id variable
+      this.positionSubscription = this.positionService.getPosition(param['_id']).subscribe(data => this.position = data[0])
+    })
   }
 
-  onSubmit(f: NgForm){
-    this.savePositionsSubcription = this.p.savePosition(this.position)
-    .subscribe(() => {
-      this.successMessage = true;
-      setTimeout(() => {
-        this.successMessage = false;
-      },2500);
-    },
-    () => {
-      this.failMessage = true;
-      setTimeout(() => {
-        this.failMessage = false;
-      },2500);
-    });
+  onSubmit() {
+    this.savePositionsSubcription = this.positionService.savePosition(this.position)
+      .subscribe(() => {
+        this.successMessage = true;
+        setTimeout(() => {
+          this.successMessage = false;
+        }, 2500);
+      },
+        () => {
+          this.failMessage = true;
+          setTimeout(() => {
+            this.failMessage = false;
+          }, 2500)
+        }
+      );
   }
 
-  ngOnDestroy(){
-    if(this.paramSubScription){
+  ngOnDestroy() {
+    if (this.paramSubScription) {
       this.paramSubScription.unsubscribe();
     }
 
-    if(this.positionSubscription) {
+    if (this.positionSubscription) {
       this.positionSubscription.unsubscribe();
     }
 
-    if(this.savePositionsSubcription){
+    if (this.savePositionsSubcription) {
       this.savePositionsSubcription.unsubscribe();
     }
   }
