@@ -16,7 +16,7 @@ export class EmployeeService {
     return this.http.get<Employee[]>(`${this.url}/employees`);
   }
 
-  // add new EmployeeRaw record
+  // save updated employee record
   saveEmployee(employee: EmployeeRaw): Observable<any> {
     return this.http.put<any>(`${this.url}/employee/${employee._id}`, employee);
   }
