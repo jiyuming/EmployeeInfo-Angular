@@ -21,13 +21,13 @@ export class EmployeeComponent implements OnInit {
   successMessage = false;
   failMessage = false;
 
-  constructor(private employeeService: EmployeeService, private positionService: PositionService, private router: ActivatedRoute) { }
+  constructor(private employeeService: EmployeeService, private positionService: PositionService, private activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
 
     // Determine what the value of the _id variable is in the Route parameter
     // a reference to the subscription will be disposed of later
-    this.paramSubscription = this.router.params.subscribe(param => {
+    this.paramSubscription = this.activatedRoute.params.subscribe(param => {
 
       // use '_id' of employee to populate the "employee" property
       //  reference to the subscription will be disposed later
