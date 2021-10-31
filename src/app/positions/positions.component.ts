@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Position } from '../data/position';
 import { PositionService } from '../data/position.service';
-import { Router} from '@angular/router';
 
 @Component({
   selector: 'app-positions',
@@ -10,11 +9,11 @@ import { Router} from '@angular/router';
 })
 export class PositionsComponent implements OnInit {
 
-  positions: Position[];
-  sub: any;
-  loadingError: boolean = false;
+  private positions: Position[];
+  private sub: any;
+  private loadingError: boolean = false;
 
-  constructor(private p: PositionService, private router: Router) { }
+  constructor(private postionService: PositionService) { }
 
   ngOnInit() {
     this.sub = this.getPositionsSub();
@@ -22,7 +21,9 @@ export class PositionsComponent implements OnInit {
 
   getPositionsSub(): any {
     try {
-      return this.p.getPositions().subscribe(positions => this.positions = positions);
+      return this.postionService.getPositions().subscribe(p => {
+        this.positions = p;
+      })
     } catch (error) {
       console.log(error);
       this.loadingError = true;
@@ -30,12 +31,7 @@ export class PositionsComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    if (this.sub != undefined) {
-      this.sub.unsubscribe();
-    }
+    if (this.sub != undefined) this.sub.unsubscribe();
   }
 
-  routePosition(id:string){
-    this.router.navigate(['/position', id]);
-  }
 }
