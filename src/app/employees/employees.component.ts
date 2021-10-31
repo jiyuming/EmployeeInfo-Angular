@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { EmployeeService } from '../data/employee.service';
+import { Component, OnInit } from '@angular/core';
 import { Employee } from '../data/employee';
+import { EmployeeService } from '../data/employee.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -15,7 +15,7 @@ export class EmployeesComponent implements OnInit {
   loadingError: boolean = false;
   filteredEmployees: Employee[];
 
-  constructor(private e: EmployeeService, private router: Router) { }
+  constructor(private employeeService: EmployeeService, private router: Router) { }
 
   ngOnInit() {
     this.sub = this.getEmployeesSub();
@@ -23,10 +23,10 @@ export class EmployeesComponent implements OnInit {
 
   getEmployeesSub(): any {
     try {
-      return this.e.getEmployees().subscribe(employees => {
-        this.employees = employees;
-        this.filteredEmployees = employees;
-      });
+      return this.employeeService.getEmployees().subscribe(e => {
+        this.employees = e;
+        this.filteredEmployees = e;
+      })
     } catch (error) {
       console.log(error);
       this.loadingError = true;
@@ -34,9 +34,7 @@ export class EmployeesComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    if (this.sub != undefined) {
-      this.sub.unsubscribe();
-    }
+    if (this.sub != undefined) this.sub.unsubscribe();
   }
 
   routeEmployee(id: string) {
