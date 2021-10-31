@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { EmployeeService } from '../data/employee.service';
 import { Employee } from '../data/employee';
-import { Router } from '@angular/router';
+import { EmployeeService } from '../data/employee.service';
 
 @Component({
   selector: 'app-employees',
@@ -13,9 +12,8 @@ export class EmployeesComponent implements OnInit {
   employees: Employee[];
   sub: any;
   loadingError: boolean = false;
-  filteredEmployees: Employee[];
 
-  constructor(private e: EmployeeService, private router: Router) { }
+  constructor(private employeeService: EmployeeService) { }
 
   ngOnInit() {
     this.sub = this.getEmployeesSub();
@@ -23,10 +21,9 @@ export class EmployeesComponent implements OnInit {
 
   getEmployeesSub(): any {
     try {
-      return this.e.getEmployees().subscribe(employees => {
-        this.employees = employees;
-        this.filteredEmployees = employees;
-      });
+      return this.employeeService.getEmployees().subscribe(e => {
+        this.employees = e;
+      })
     } catch (error) {
       console.log(error);
       this.loadingError = true;
@@ -34,21 +31,6 @@ export class EmployeesComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    if (this.sub != undefined) {
-      this.sub.unsubscribe();
-    }
-  }
-
-  routeEmployee(id: string) {
-    this.router.navigate(['/employee', id]);
-  }
-
-  onEmployeeSearchKeyUP(event) {
-    let filter = event.target.value.toLowerCase();
-    this.filteredEmployees = this.employees.filter(e => {
-      return e.FirstName.toLowerCase().includes(filter)
-        || e.LastName.toLowerCase().includes(filter)
-        || e.Position.PositionName.toLowerCase().includes(filter);
-    });
+    if (this.sub != undefined) this.sub.unsubscribe();
   }
 }
